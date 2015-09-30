@@ -4,8 +4,24 @@ This is a [Dynamic Inventory](http://docs.ansible.com/ansible/intro_dynamic_inve
 
 It was written because we maintain a lot of servers and static inventory files did not meet our demand, and we like MySQL.
 
-
 ## Usage
+
+Simply call the script like the following
+
+```
+ansible-playbook -i mysql.py
+# or
+ansible -i mysql.py
+```
+
+Limitations also work
+
+```
+ansible-playbook -i mysql.py --limit foo.bar.com
+ansible-playbook -i mysql.py --limit groupFoo
+```
+
+## Setup
 I won't explain the process of installing a database or creating the tables, see `tables.sql` for the required MySQL structure.
 
 Once setup rename `mysql.ini.dist` to `mysql.ini` to suit your needs, if you don't want to use caching just put it on 0.
