@@ -125,35 +125,38 @@ class MySQLInventory(object):
                             help='Force refresh of cache by making API requests to MySQL (default: False - use cache files)')
         self.args = parser.parse_args()
 
+    def process_group(self, groupname):
+        # Fetch the Group info
+        if groupname not in self.inventory:
+            cursor = self.conn.cursor(pymysql.cursors.DictCursor)
+            sql = "SELECT variables FROM `group` WHERE name = %s"
+            cursor.execute(sql, groupname)
+            groupinfo = cursor.fetchone()
+            self.inventory[groupname] = dict()
+            if groupinfo['variables'] is not None:
+                try:
+                   self.inventory[groupname]['vars'] = json.loads(groupinfo['variables'])
+                   self.inventory[groupname]['hosts'] = list()
+                except:
+                   raise Exception('Group does not have valid JSON', groupname, groupinfo['variables'])
+
+            if 'vars' not in self.inventory[groupname]:
+               self.inventory[groupname] = list()
+
     def update_cache(self):
         """ Make calls to MySQL and save the output in a cache """
 
         self._connect()
         self.hosts = dict()
 
-        cursor = self.conn.cursor(pymysql.cursors.DictCursor)
         # Fetch the systems
+        cursor = self.conn.cursor(pymysql.cursors.DictCursor)
         sql = "SELECT * FROM inventory;"
         cursor.execute(sql)
         data = cursor.fetchall()
 
         for host in data:
-
-            # Fetch the Group info
-            if host['group'] not in self.inventory:
-                sql = "SELECT variables FROM `group` WHERE name = %s"
-                cursor.execute(sql, host['group'])
-                groupinfo = cursor.fetchone()
-                self.inventory[host['group']] = dict()
-                if groupinfo['variables'] is not None:
-                    try:
-                       self.inventory[host['group']]['vars'] = json.loads(groupinfo['variables'])
-                       self.inventory[host['group']]['hosts'] = list()
-                    except:
-                       raise Exception('Group does not have valid JSON', host['group'], groupinfo['variables'])
-
-                if 'vars' not in self.inventory[host['group']]:
-                   self.inventory[host['group']] = list()
+            self.process_group(host['group'])
 
             if 'hosts' in self.inventory[host['group']]:
                 self.inventory[host['group']]['hosts'].append(host['host'])
@@ -169,6 +172,30 @@ class MySQLInventory(object):
 
             self.cache[dns_name] = cleanhost
             self.inventory = self.inventory
+
+        # first fetch all the groups to check for possible childs
+        gsql = """SELECT
+               `gparent`.`name` as `parent`,
+               `gchild`.`name` as `child`
+               FROM childgroups
+               LEFT JOIN `group` `gparent` on `childgroups`.`parent_id` = `gparent`.`id`
+               LEFT JOIN `group` `gchild` on `childgroups`.`child_id` = `gchild`.`id`
+               ORDER BY `parent`;"""
+
+        cursor.execute(gsql)
+        groupdata = cursor.fetchall()
+
+        for group in groupdata:
+            self.process_group(group['parent'])
+            if 'vars' not in self.inventory[group['parent']]:
+                tmphosts = self.inventory[group['parent']]
+                self.inventory[group['parent']] = dict()
+                self.inventory[group['parent']]['hosts'] = tmphosts
+
+            if 'children' not in self.inventory[group['parent']]:
+                self.inventory[group['parent']]['children'] = list()
+
+            self.inventory[group['parent']]['children'].append(group['child'])
 
         self.write_to_cache(self.cache, self.cache_path_cache)
         self.write_to_cache(self.inventory, self.cache_path_inventory)
