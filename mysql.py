@@ -187,15 +187,18 @@ class MySQLInventory(object):
 
         for group in groupdata:
             self.process_group(group['parent'])
-            if 'vars' not in self.inventory[group['parent']]:
-                tmphosts = self.inventory[group['parent']]
-                self.inventory[group['parent']] = dict()
-                self.inventory[group['parent']]['hosts'] = tmphosts
+            if 'hosts' not in self.inventory[group['parent']]:
+                self.inventory[group['parent']] = {'hosts': self.inventory[group['parent']]}
 
             if 'children' not in self.inventory[group['parent']]:
                 self.inventory[group['parent']]['children'] = list()
 
             self.inventory[group['parent']]['children'].append(group['child'])
+
+        # cleanup output
+        for group in self.inventory:
+            if not self.inventory[group]['hosts']:
+                del self.inventory[group]['hosts']
 
         self.write_to_cache(self.cache, self.cache_path_cache)
         self.write_to_cache(self.inventory, self.cache_path_inventory)
