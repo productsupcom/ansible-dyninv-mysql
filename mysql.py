@@ -14,23 +14,12 @@ Extended upon the Cobbler Inventory script.
 
 """
 
-# (c) 2015, Yorick Terweijden <yt@productsup.com>
+# Copyright (c) 2015 Productsup GmbH, Yorick Terweijden yt@products-up.de
 #
-# This file is part of Ansible,
+# As it is mostly based on the original Cobbler Dynamic Inventory
+# https://github.com/ansible/ansible/blob/devel/contrib/inventory/cobbler.py
+# the same license, the GPL-3 applies.
 #
-# Ansible is free software: you can redistribute it and/or modify
-# it under the terms of the GNU General Public License as published by
-# the Free Software Foundation, either version 3 of the License, or
-# (at your option) any later version.
-#
-# Ansible is distributed in the hope that it will be useful,
-# but WITHOUT ANY WARRANTY; without even the implied warranty of
-# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-# GNU General Public License for more details.
-#
-# You should have received a copy of the GNU General Public License
-# along with Ansible.  If not, see <http://www.gnu.org/licenses/>.
-
 ######################################################################
 
 import argparse
@@ -168,7 +157,7 @@ class MySQLInventory(object):
                 cleanhost = json.loads(host['host_vars'])
             else:
                 cleanhost = dict()
-            cleanhost['pup_hostname'] = host['hostname']
+            cleanhost['inventory_hostname'] = host['hostname']
 
             self.cache[dns_name] = cleanhost
             self.inventory = self.inventory
