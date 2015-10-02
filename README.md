@@ -30,7 +30,11 @@ Once setup rename `mysql.ini.dist` to `mysql.ini` to suit your needs, if you don
 In the table `group` you create the groups you need and their variables,
 
 ### Hosts
-In the table `host` under `host` you place the IP/DNS for the system, under `hostname` you can fill in a value, this will be presented as a variable `inventory_hostname` during the play.
+In the table `host` under `host` you place the IP/DNS for the system.
+
+#### Facts
+Under `hostname` you can fill in a value, this will be presented as a variable `inventory_hostname` during the play.
+You can modify the name of this Fact variable by changing the `facts_hostname_var` variable in my `mysql.ini`.
 
 ### Relation between Hosts and Groups
 The table `hostgroups` maps the relation between `host` and `group` using two `FOREIGN KEYS`.

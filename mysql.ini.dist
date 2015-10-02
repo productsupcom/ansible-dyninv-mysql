@@ -21,3 +21,6 @@ cache_path = /tmp
 # The number of seconds a cache file is considered valid. After this many
 # seconds, a new API call will be made, and the cache file will be updated.
 cache_max_age = 0
+
+# Facts variable for the hostname
+facts_hostname_var = inventory_hostname

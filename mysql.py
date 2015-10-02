@@ -104,6 +104,9 @@ class MySQLInventory(object):
         self.cache_path_inventory = cache_path + "/ansible-mysql.index"
         self.cache_max_age = config.getint('config', 'cache_max_age')
 
+        # Other config
+        self.facts_hostname_var = config.get('config', 'facts_hostname_var')
+
     def parse_cli_args(self):
         """ Command line argument processing """
 
@@ -157,7 +160,7 @@ class MySQLInventory(object):
                 cleanhost = json.loads(host['host_vars'])
             else:
                 cleanhost = dict()
-            cleanhost['inventory_hostname'] = host['hostname']
+            cleanhost[self.facts_hostname_var] = host['hostname']
 
             self.cache[dns_name] = cleanhost
             self.inventory = self.inventory
