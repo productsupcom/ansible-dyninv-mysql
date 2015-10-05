@@ -125,7 +125,7 @@ class MySQLInventory(object):
             cursor.execute(sql, groupname)
             groupinfo = cursor.fetchone()
             self.inventory[groupname] = dict()
-            if groupinfo['variables'] is not None:
+            if groupinfo['variables'] and groupinfo['variables'].strip():
                 try:
                    self.inventory[groupname]['vars'] = json.loads(groupinfo['variables'])
                    self.inventory[groupname]['hosts'] = list()
@@ -156,8 +156,11 @@ class MySQLInventory(object):
                 self.inventory[host['group']].append(host['host'])
 
             dns_name = host['host']
-            if host['host_vars'] is not None:
-                cleanhost = json.loads(host['host_vars'])
+            if host['host_vars'] and host['host_vars'].strip():
+                try:
+                   cleanhost = json.loads(host['host_vars'])
+                except:
+                   raise Exception('Host does not have valid JSON', host['host'], host['host_vars'])
             else:
                 cleanhost = dict()
             cleanhost[self.facts_hostname_var] = host['hostname']
