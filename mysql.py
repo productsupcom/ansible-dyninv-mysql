@@ -175,6 +175,7 @@ class MySQLInventory(object):
                FROM childgroups
                LEFT JOIN `group` `gparent` on `childgroups`.`parent_id` = `gparent`.`id`
                LEFT JOIN `group` `gchild` on `childgroups`.`child_id` = `gchild`.`id`
+               WHERE `gparent`.`enabled` = 1
                ORDER BY `parent`;"""
 
         cursor.execute(gsql)
