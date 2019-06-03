@@ -169,14 +169,7 @@ class MySQLInventory(object):
             self.inventory = self.inventory
 
         # first fetch all the groups to check for possible childs
-        gsql = """SELECT
-               `gparent`.`name` as `parent`,
-               `gchild`.`name` as `child`
-               FROM childgroups
-               LEFT JOIN `group` `gparent` on `childgroups`.`parent_id` = `gparent`.`id`
-               LEFT JOIN `group` `gchild` on `childgroups`.`child_id` = `gchild`.`id`
-               WHERE `gparent`.`enabled` = 1
-               ORDER BY `parent`;"""
+        gsql = """SELECT * FROM children;"""
 
         cursor.execute(gsql)
         groupdata = cursor.fetchall()
