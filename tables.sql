@@ -56,7 +56,7 @@ AS SELECT
 FROM (`group` left join (`host` left join `hostgroups` on((`host`.`id` = `hostgroups`.`host_id`))) on((`hostgroups`.`group_id` = `group`.`id`))) where ((`host`.`enabled` = 1) and (`group`.`enabled` = 1)) order by `host`.`hostname`;
 
 -- Create syntax for VIEW 'children'
-CREATE `children`
+CREATE VIEW `children`
 AS SELECT
    `gparent`.`name` AS `parent`,
    `gchild`.`name` AS `child`
