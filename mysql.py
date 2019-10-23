@@ -133,7 +133,7 @@ class MySQLInventory(object):
                    raise Exception('Group does not have valid JSON', groupname, groupinfo['variables'])
 
             if 'vars' not in self.inventory[groupname]:
-               self.inventory[groupname] = list()
+               self.inventory[groupname]['hosts'] = list()
 
     def update_cache(self):
         """ Make calls to MySQL and save the output in a cache """
