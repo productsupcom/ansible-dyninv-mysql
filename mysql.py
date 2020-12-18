@@ -23,7 +23,7 @@ Extended upon the Cobbler Inventory script.
 ######################################################################
 
 import argparse
-import ConfigParser
+import configparser
 import os
 import re
 from time import time
@@ -91,7 +91,7 @@ class MySQLInventory(object):
     def read_settings(self):
         """ Reads the settings from the mysql.ini file """
 
-        config = ConfigParser.SafeConfigParser()
+        config = configparser.ConfigParser()
         config.read(os.path.dirname(os.path.realpath(__file__)) + '/mysql.ini')
 
         self.myconfig = dict(config.items('server'))
