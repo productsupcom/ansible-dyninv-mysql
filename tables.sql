@@ -61,3 +61,10 @@ AS SELECT
    `gparent`.`name` AS `parent`,
    `gchild`.`name` AS `child`
 FROM (((`childgroups` left join `group` `gparent` on((`childgroups`.`parent_id` = `gparent`.`id`))) left join `group` `gchild` on((`childgroups`.`child_id` = `gchild`.`id`))) left join `inventory` on((`gchild`.`name` = `inventory`.`group`))) where ((`gparent`.`enabled` = 1) and (`gchild`.`enabled` = 1) and (`inventory`.`hostname` is not null)) group by `gparent`.`name`,`gchild`.`name` order by `gparent`.`name`;
+
+-- Create syntax for VIEW 'children_all'
+CREATE VIEW `children_all`
+AS select 
+    `gparent`.`name` AS `parent`,
+    `gchild`.`name` AS `child` 
+FROM ((`childgroups` left join `group` `gparent` on((`childgroups`.`parent_id` = `gparent`.`id`))) left join `group` `gchild` on((`childgroups`.`child_id` = `gchild`.`id`))) where ((`gparent`.`enabled` = 1) and (`gchild`.`enabled` = 1)) group by `gparent`.`name`,`gchild`.`name` order by `gparent`.`name`;

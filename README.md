@@ -30,17 +30,24 @@ Once setup rename `mysql.ini.dist` to `mysql.ini` to suit your needs, if you don
 In the table `group` you create the groups you need and their variables,
 
 ### Hosts
-In the table `host` under `host` you place the IP/DNS for the system.
+In the table `host` under `host` you place the IP/DNS for the system. This will be used as ansible_host fact.
 
-#### Facts
-Under `hostname` you can fill in a value, this will be presented as a variable `inventory_hostname` during the play.
-You can modify the name of this Fact variable by changing the `facts_hostname_var` variable in my `mysql.ini`.
+#### Inventory_hostname
+Under `hostname` you can fill in a unique hostname, this will typically be used as the host's primary key (==`inventory_hostname`).
+You can modify the field to be used as `inventory_hostname` by changing the `inventory_hostname` variable in `mysql.ini`.
+Make sure this is a unique key field (e.g. `host` or `hostname`), the default for `inventory_hostname` is `host` (backward compatible).
 
 ### Relation between Hosts and Groups
 The table `hostgroups` maps the relation between `host` and `group` using two `FOREIGN KEYS`.
 
 #### Children
 Groups can have other groups as children, use the table `childgroups`.
+
+
+#### Inventory_groups
+By default only groups from `hostgroups` and groups from `childgroups` having a child group from `hostgroups` will be included into the inventory (i.e. max. two group levels).
+You can include all groups from `hostgroups`and `childgroups` by changing the `inventory_groups` variable in `mysql.ini` to `all`.
+This allows you to define group hierarchies of any depth and complexity.
 
 ### Note on Variables
 This applies to `host` and `group` respectively.

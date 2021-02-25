@@ -22,5 +22,14 @@ cache_path = /tmp
 # seconds, a new API call will be made, and the cache file will be updated.
 cache_max_age = 0
 
-# Facts variable for the hostname
-facts_hostname_var = inventory_hostname
+# Define which unique key should be used as inventory_hostname:
+#    host (default)
+#    hostname
+inventory_hostname = hostname
+
+# Define the set of `children` to include in inventory:
+#	immediate: (default) 
+#               groups from `hostgroups` (i.e.: groups containing hosts from `host`) plus
+#               groups from `childgroup` having childs from `hostgroups`
+#	all:        any group mentioned in `group` or childgroup`
+inventory_groups = all

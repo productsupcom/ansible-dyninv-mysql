@@ -105,7 +105,14 @@ class MySQLInventory(object):
         self.cache_max_age = config.getint('config', 'cache_max_age')
 
         # Other config
-        self.facts_hostname_var = config.get('config', 'facts_hostname_var')
+        try:
+		    self.inventory_hostname = config.get('config', 'inventory_hostname') 
+        except:
+            self.inventory_hostname = 'host'
+        try:
+		    self.inventory_groups = config.get('config', 'inventory_groups') 
+        except:
+            self.inventory_groups = 'immediate'
 
     def parse_cli_args(self):
         """ Command line argument processing """
@@ -150,10 +157,11 @@ class MySQLInventory(object):
         for host in data:
             self.process_group(host['group'])
 
+            inventory_hostname = host[self.inventory_hostname]
             if 'hosts' in self.inventory[host['group']]:
-                self.inventory[host['group']]['hosts'].append(host['host'])
+                self.inventory[host['group']]['hosts'].append(inventory_hostname)
             else:
-                self.inventory[host['group']].append(host['host'])
+                self.inventory[host['group']].append(inventory_hostname)
 
             dns_name = host['host']
             if host['host_vars'] and host['host_vars'].strip():
@@ -163,13 +171,16 @@ class MySQLInventory(object):
                    raise Exception('Host does not have valid JSON', host['host'], host['host_vars'])
             else:
                 cleanhost = dict()
-            cleanhost[self.facts_hostname_var] = host['hostname']
+            cleanhost['ansible_host'] = dns_name
 
-            self.cache[dns_name] = cleanhost
+            self.cache[inventory_hostname] = cleanhost
             self.inventory = self.inventory
 
         # first fetch all the groups to check for possible childs
-        gsql = """SELECT * FROM children;"""
+        if self.inventory_groups == 'all':
+            gsql = """SELECT * FROM children_all;"""
+        else:
+            gsql = """SELECT * FROM children;"""
 
         cursor.execute(gsql)
         groupdata = cursor.fetchall()
@@ -186,7 +197,7 @@ class MySQLInventory(object):
 
         # cleanup output
         for group in self.inventory:
-            if not self.inventory[group]['hosts']:
+            if 'hosts' in self.inventory[group] and self.inventory[group]['hosts'] == list():
                 del self.inventory[group]['hosts']
 
         self.write_to_cache(self.cache, self.cache_path_cache)
