@@ -106,11 +106,11 @@ class MySQLInventory(object):
 
         # Other config
         try:
-		    self.inventory_hostname = config.get('config', 'inventory_hostname') 
+            self.inventory_hostname = config.get('config', 'inventory_hostname') 
         except:
             self.inventory_hostname = 'host'
         try:
-		    self.inventory_groups = config.get('config', 'inventory_groups') 
+            self.inventory_groups = config.get('config', 'inventory_groups') 
         except:
             self.inventory_groups = 'immediate'
 
