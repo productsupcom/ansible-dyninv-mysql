@@ -5,7 +5,7 @@
 
 host = YOURHOST
 user = YOURUSER
-passwd = YOURPASSWORD
+passwd = 
 db = YOURDB
 port = 3306
 
