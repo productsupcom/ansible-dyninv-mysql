@@ -1,3 +1,7 @@
+## Notice
+
+This repository is unmaintained since we have deprecated it internally, therefore it will not receive any new releases or contributions. We invite all people interested to look at updated forks.
+
 # Ansible Dynamic Inventory for MySQL
 
 This is a [Dynamic Inventory](http://docs.ansible.com/ansible/intro_dynamic_inventory.html) for [Ansible](https://github.com/ansible/ansible) to be used together with MySQL.
